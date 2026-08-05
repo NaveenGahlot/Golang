@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
 )
 
 // This file demonstrates how to perform basic CRUD operations using HTTP methods in Go.
@@ -17,8 +19,7 @@ type Todo struct {
 	Completed bool   `json:"completed"`
 }
 
-func main() {
-	fmt.Println("CRUD Operations Demo")
+func perforGetReuest() {
 	res, err := http.Get("https://jsonplaceholder.typicode.com/todos/1")
 	if err != nil {
 		fmt.Println("Error in GET request:", err)
@@ -53,6 +54,50 @@ func main() {
 	fmt.Println("ID:-", todo.ID)
 	fmt.Println("Title:-", todo.Title)
 	fmt.Println("Completed:-", todo.Completed)
+}
+
+func performPostRequest() {
+	// Example of performing a POST request to create a new resource
+	todo := Todo{
+		UserID:    1,
+		Title:     "New Todo Item",
+		Completed: false,
+	}
+	// Convert the Todo struct to JSON
+	jsonData, err := json.Marshal(todo)
+	if err != nil {
+		fmt.Println("Error marshalling JSON:", err)
+		return
+	}
+	// convert json data to string
+	jsonString := string(jsonData)
+	fmt.Println("JSON Data to be sent in POST request:", jsonString)
+
+	// convert string data to reader
+	reader := strings.NewReader(jsonString)
+	myURL := "https://jsonplaceholder.typicode.com/todos"
+
+	// Perform the POST request
+	res, err := http.Post(myURL, "application/json", reader)
+	if err != nil {
+		fmt.Println("Error in POST request:", err)
+		return
+	}
+	defer res.Body.Close()
+
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println("Error reading response body:", err)
+		return
+	}
+	fmt.Println("Response:-", string(data))
+	fmt.Println("Response Status:-", res.Status)
+}
+
+func main() {
+	fmt.Println("CRUD Operations Demo")
+	// perforGetReuest()
+	performPostRequest()
 
 	// Note: The above code demonstrates the Read operation of CRUD. To implement Create, Update, and Delete operations, you would typically use HTTP POST, PUT/PATCH, and DELETE methods respectively, along with appropriate request bodies and endpoints.
 }
