@@ -94,10 +94,58 @@ func performPostRequest() {
 	fmt.Println("Response Status:-", res.Status)
 }
 
+func performUpdateRequest() {
+	// Example of performing a PUT request to update an existing resource
+	todo := Todo{
+		UserID:    12255,
+		Title:     "Updated Todo Item",
+		Completed: true,
+	}
+
+	// Convert the Todo struct to JSON
+	jsonData, err := json.Marshal(todo)
+	if err != nil {
+		fmt.Println("Error marshalling JSON:", err)
+		return
+	}
+
+	// convert string data to reader
+	reader := strings.NewReader(string(jsonData))
+	const myURL = "https://jsonplaceholder.typicode.com/todos/1" // Update the resource with ID 1
+
+	// Create a new HTTP request with the PUT method
+	req, err := http.NewRequest(http.MethodPut, myURL, reader)
+	if err != nil {
+		fmt.Println("Error creating PUT request:", err)
+		return
+	}
+
+	// Set the appropriate headers
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send the request using the default HTTP client
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error in PUT request:", err)
+		return
+	}
+	defer res.Body.Close()
+
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println("Error reading response body:", err)
+		return
+	}
+	fmt.Println("Response:-", string(data))
+	fmt.Println("Response Status:-", res.Status)
+}
+
 func main() {
 	fmt.Println("CRUD Operations Demo")
 	// perforGetReuest()
-	performPostRequest()
+	// performPostRequest()
+	performUpdateRequest()
 
 	// Note: The above code demonstrates the Read operation of CRUD. To implement Create, Update, and Delete operations, you would typically use HTTP POST, PUT/PATCH, and DELETE methods respectively, along with appropriate request bodies and endpoints.
 }
