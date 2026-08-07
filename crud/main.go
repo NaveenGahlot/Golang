@@ -19,7 +19,7 @@ type Todo struct {
 	Completed bool   `json:"completed"`
 }
 
-func perforGetReuest() {
+func performGetRequest() {
 	res, err := http.Get("https://jsonplaceholder.typicode.com/todos/1")
 	if err != nil {
 		fmt.Println("Error in GET request:", err)
@@ -141,11 +141,40 @@ func performUpdateRequest() {
 	fmt.Println("Response Status:-", res.Status)
 }
 
+func performDeleteRequest() {
+	// Example of performing a DELETE request to remove an existing resource
+	const myURL = "https://jsonplaceholder.typicode.com/todos/1" // Delete the resource with ID 1
+
+	req, err := http.NewRequest(http.MethodDelete, myURL, nil)
+	if err != nil {
+		fmt.Println("Error creating DELETE request:", err)
+		return
+	}
+
+	// Send the request using the default HTTP client
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error in DELETE request:", err)
+		return
+	}
+	defer res.Body.Close()
+
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println("Error reading response body:", err)
+		return
+	}
+	fmt.Println("Response:-", string(data))
+	fmt.Println("Response Status:-", res.Status)
+}
+
 func main() {
 	fmt.Println("CRUD Operations Demo")
 	// perforGetReuest()
 	// performPostRequest()
-	performUpdateRequest()
+	// performUpdateRequest()
+	performDeleteRequest()
 
 	// Note: The above code demonstrates the Read operation of CRUD. To implement Create, Update, and Delete operations, you would typically use HTTP POST, PUT/PATCH, and DELETE methods respectively, along with appropriate request bodies and endpoints.
 }
